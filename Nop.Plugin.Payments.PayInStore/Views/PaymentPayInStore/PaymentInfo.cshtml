@@ -3,10 +3,13 @@
 }
 @model Nop.Plugin.Payments.PayInStore.Models.PaymentInfoModel
 @using Nop.Web.Framework;
+
 <table width="100%" cellpadding="0" cellspacing="0">
     <tr>
         <td>
-            @Html.Raw(Model.DescriptionText)
+            <p>
+                @Html.Raw(Model.DescriptionText)
+            </p>
         </td>
     </tr>
 </table>

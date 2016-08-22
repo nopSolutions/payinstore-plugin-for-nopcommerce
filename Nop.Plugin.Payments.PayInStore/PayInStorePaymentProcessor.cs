@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Web.Routing;
 using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Payments;
 using Nop.Core.Plugins;
 using Nop.Plugin.Payments.PayInStore.Controllers;
 using Nop.Services.Configuration;
@@ -18,19 +17,22 @@ namespace Nop.Plugin.Payments.PayInStore
     public class PayInStorePaymentProcessor : BasePlugin, IPaymentMethod
     {
         #region Fields
-        private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
-        private readonly ISettingService _settingService;
+
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
+        private readonly ISettingService _settingService;
+        private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
+
         #endregion
 
         #region Ctor
 
-        public PayInStorePaymentProcessor(PayInStorePaymentSettings payInStorePaymentSettings,
-            ISettingService settingService, IOrderTotalCalculationService orderTotalCalculationService)
+        public PayInStorePaymentProcessor(IOrderTotalCalculationService orderTotalCalculationService,
+            ISettingService settingService,
+            PayInStorePaymentSettings payInStorePaymentSettings)
         {
-            this._payInStorePaymentSettings = payInStorePaymentSettings;
-            this._settingService = settingService;
             this._orderTotalCalculationService = orderTotalCalculationService;
+            this._settingService = settingService;
+            this._payInStorePaymentSettings = payInStorePaymentSettings;
         }
 
         #endregion
@@ -44,9 +46,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// <returns>Process payment result</returns>
         public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
         {
-            var result = new ProcessPaymentResult();
-            result.NewPaymentStatus = PaymentStatus.Pending;
-            return result;
+            return new ProcessPaymentResult();
         }
 
         /// <summary>
@@ -183,43 +183,53 @@ namespace Nop.Plugin.Payments.PayInStore
             routeValues = new RouteValueDictionary() { { "Namespaces", "Nop.Plugin.Payments.PayInStore.Controllers" }, { "area", null } };
         }
 
+        /// <summary>
+        /// Get type of the controller
+        /// </summary>
+        /// <returns>Controller type</returns>
         public Type GetControllerType()
         {
             return typeof(PaymentPayInStoreController);
         }
 
+        /// <summary>
+        /// Install the plugin
+        /// </summary>
         public override void Install()
         {
-            var settings = new PayInStorePaymentSettings()
+            //settings
+            _settingService.SaveSetting(new PayInStorePaymentSettings()
             {
                 DescriptionText = "<p>Reserve items at your local store, and pay in store when you pick up your order.<br />Our store location: USA, New York,...</p><p>P.S. You can edit this text from admin panel.</p>"
-            };
-            _settingService.SaveSetting(settings);
+            });
 
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText", "Description");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText.Hint", "Enter info that will be shown to customers during checkout");
+            //locales
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFee", "Additional fee");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFee.Hint", "The additional fee.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFeePercentage", "Additional fee. Use percentage");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFeePercentage.Hint", "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText", "Description");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText.Hint", "Enter info that will be shown to customers during checkout");
 
-            
             base.Install();
         }
         
+        /// <summary>
+        /// Uninstall the plugin
+        /// </summary>
         public override void Uninstall()
         {
             //settings
             _settingService.DeleteSetting<PayInStorePaymentSettings>();
 
             //locales
-            this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText");
-            this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText.Hint");
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFee");
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFee.Hint");
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFeePercentage");
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFeePercentage.Hint");
-            
+            this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText");
+            this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText.Hint");
+
             base.Uninstall();
         }
 
@@ -232,10 +242,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public bool SupportCapture
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         /// <summary>
@@ -243,10 +250,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public bool SupportPartiallyRefund
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         /// <summary>
@@ -254,10 +258,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public bool SupportRefund
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         /// <summary>
@@ -265,10 +266,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public bool SupportVoid
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         /// <summary>
@@ -276,10 +274,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public RecurringPaymentType RecurringPaymentType
         {
-            get
-            {
-                return RecurringPaymentType.NotSupported;
-            }
+            get { return RecurringPaymentType.NotSupported; }
         }
 
         /// <summary>
@@ -287,10 +282,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public PaymentMethodType PaymentMethodType
         {
-            get
-            {
-                return PaymentMethodType.Standard;
-            }
+            get { return PaymentMethodType.Standard; }
         }
 
         /// <summary>
