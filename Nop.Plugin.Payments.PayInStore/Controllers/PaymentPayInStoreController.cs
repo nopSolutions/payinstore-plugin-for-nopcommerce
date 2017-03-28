@@ -64,7 +64,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
                 model.AdditionalFeePercentage_OverrideForStore = _settingService.SettingExists(payInStorePaymentSettings, x => x.AdditionalFeePercentage, storeScope);
             }
 
-            return View("~/Plugins/Payments.PayInStore/Views/PaymentPayInStore/Configure.cshtml", model);
+            return View("~/Plugins/Payments.PayInStore/Views/Configure.cshtml", model);
         }
 
         [HttpPost]
@@ -108,7 +108,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
                 DescriptionText = payInStorePaymentSettings.DescriptionText
             };
 
-            return View("~/Plugins/Payments.PayInStore/Views/PaymentPayInStore/PaymentInfo.cshtml", model);
+            return View("~/Plugins/Payments.PayInStore/Views/PaymentInfo.cshtml", model);
         }
 
         [NonAction]

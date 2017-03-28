@@ -21,6 +21,7 @@ namespace Nop.Plugin.Payments.PayInStore
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ISettingService _settingService;
         private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
+        private readonly ILocalizationService _localizationService;
 
         #endregion
 
@@ -28,11 +29,13 @@ namespace Nop.Plugin.Payments.PayInStore
 
         public PayInStorePaymentProcessor(IOrderTotalCalculationService orderTotalCalculationService,
             ISettingService settingService,
-            PayInStorePaymentSettings payInStorePaymentSettings)
+            PayInStorePaymentSettings payInStorePaymentSettings,
+            ILocalizationService localizationService)
         {
             this._orderTotalCalculationService = orderTotalCalculationService;
             this._settingService = settingService;
             this._payInStorePaymentSettings = payInStorePaymentSettings;
+            this._localizationService = localizationService;
         }
 
         #endregion
@@ -210,6 +213,7 @@ namespace Nop.Plugin.Payments.PayInStore
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFeePercentage.Hint", "Determines whether to apply a percentage additional fee to the order total. If not enabled, a fixed value is used.");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText", "Description");
             this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText.Hint", "Enter info that will be shown to customers during checkout");
+            this.AddOrUpdatePluginLocaleResource("Plugins.Payment.PayInStore.PaymentMethodDescription", "Paying directly in the store");
 
             base.Install();
         }
@@ -229,6 +233,7 @@ namespace Nop.Plugin.Payments.PayInStore
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.AdditionalFeePercentage.Hint");
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText");
             this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.DescriptionText.Hint");
+            this.DeletePluginLocaleResource("Plugins.Payment.PayInStore.PaymentMethodDescription");
 
             base.Uninstall();
         }
@@ -293,7 +298,15 @@ namespace Nop.Plugin.Payments.PayInStore
             get { return false; }
         }
 
+        /// <summary>
+        /// Gets a payment method description that will be displayed on checkout pages in the public store
+        /// </summary>
+        public string PaymentMethodDescription
+        {
+            get { return _localizationService.GetResource("Plugins.Payment.PayInStore.PaymentMethodDescription"); }
+        }
+
         #endregion
-        
+
     }
 }
