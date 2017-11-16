@@ -1,6 +1,5 @@
-﻿using System.Web.Mvc;
-using Nop.Web.Framework;
-using Nop.Web.Framework.Mvc;
+﻿using Nop.Web.Framework.Mvc.ModelBinding;
+using Nop.Web.Framework.Mvc.Models;
 
 namespace Nop.Plugin.Payments.PayInStore.Models
 {
@@ -8,7 +7,6 @@ namespace Nop.Plugin.Payments.PayInStore.Models
     {
         public int ActiveStoreScopeConfiguration { get; set; }
 
-        [AllowHtml]
         [NopResourceDisplayName("Plugins.Payment.PayInStore.DescriptionText")]
         public string DescriptionText { get; set; }
         public bool DescriptionText_OverrideForStore { get; set; }

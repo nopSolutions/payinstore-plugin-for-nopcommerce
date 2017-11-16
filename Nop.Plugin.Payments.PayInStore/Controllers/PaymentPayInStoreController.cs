@@ -1,24 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Web.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Plugin.Payments.PayInStore.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
-using Nop.Services.Payments;
+using Nop.Services.Security;
 using Nop.Services.Stores;
+using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
+using Nop.Web.Framework.Mvc.Filters;
 
 namespace Nop.Plugin.Payments.PayInStore.Controllers
 {
+    [AuthorizeAdmin]
+    [Area(AreaNames.Admin)]
     public class PaymentPayInStoreController : BasePaymentController
     {
         #region Fields
 
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
-        private readonly IStoreContext _storeContext;
         private readonly IStoreService _storeService;
         private readonly IWorkContext _workContext;
+        private readonly IPermissionService _permissionService;
 
         #endregion
 
@@ -26,25 +29,26 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 
         public PaymentPayInStoreController(ILocalizationService localizationService,
             ISettingService settingService,
-            IStoreContext storeContext,
             IStoreService storeService,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            IPermissionService permissionService)
         {
             this._localizationService = localizationService;
             this._settingService = settingService;
-            this._storeContext = storeContext;
             this._storeService = storeService;
             this._workContext = workContext;
+            this._permissionService = permissionService;
         }
 
         #endregion
 
         #region Methods
 
-        [AdminAuthorize]
-        [ChildActionOnly]
-        public ActionResult Configure()
+        public IActionResult Configure()
         {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+                return AccessDeniedView();
+
             //load settings for a chosen store scope
             var storeScope = GetActiveStoreScopeConfiguration(_storeService, _workContext);
             var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(storeScope);
@@ -68,10 +72,11 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
         }
 
         [HttpPost]
-        [AdminAuthorize]
-        [ChildActionOnly]
-        public ActionResult Configure(ConfigurationModel model)
+        public IActionResult Configure(ConfigurationModel model)
         {
+            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+                return AccessDeniedView();
+
             if (!ModelState.IsValid)
                 return Configure();
 
@@ -98,31 +103,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 
             return Configure();
         }
-
-        [ChildActionOnly]
-        public ActionResult PaymentInfo()
-        {
-            var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(_storeContext.CurrentStore.Id);
-            var model = new PaymentInfoModel
-            {
-                DescriptionText = payInStorePaymentSettings.DescriptionText
-            };
-
-            return View("~/Plugins/Payments.PayInStore/Views/PaymentInfo.cshtml", model);
-        }
-
-        [NonAction]
-        public override IList<string> ValidatePaymentForm(FormCollection form)
-        {
-            return new List<string>();
-        }
-
-        [NonAction]
-        public override ProcessPaymentRequest GetPaymentInfo(FormCollection form)
-        {
-            return new ProcessPaymentRequest();
-        }
-
+        
         #endregion
     }
 }

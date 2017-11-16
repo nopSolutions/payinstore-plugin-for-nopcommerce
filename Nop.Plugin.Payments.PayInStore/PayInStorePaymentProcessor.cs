@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Web.Routing;
+using Microsoft.AspNetCore.Http;
+using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Core.Plugins;
 using Nop.Plugin.Payments.PayInStore.Controllers;
@@ -22,6 +23,7 @@ namespace Nop.Plugin.Payments.PayInStore
         private readonly ISettingService _settingService;
         private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
         private readonly ILocalizationService _localizationService;
+        private readonly IWebHelper _webHelper;
 
         #endregion
 
@@ -30,12 +32,14 @@ namespace Nop.Plugin.Payments.PayInStore
         public PayInStorePaymentProcessor(IOrderTotalCalculationService orderTotalCalculationService,
             ISettingService settingService,
             PayInStorePaymentSettings payInStorePaymentSettings,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService,
+            IWebHelper webHelper)
         {
             this._orderTotalCalculationService = orderTotalCalculationService;
             this._settingService = settingService;
             this._payInStorePaymentSettings = payInStorePaymentSettings;
             this._localizationService = localizationService;
+            this._webHelper = webHelper;
         }
 
         #endregion
@@ -154,36 +158,30 @@ namespace Nop.Plugin.Payments.PayInStore
         public bool CanRePostProcessPayment(Order order)
         {
             if (order == null)
-                throw new ArgumentNullException("order");
+                throw new ArgumentNullException(nameof(order));
 
             //it's not a redirection payment method. So we always return false
             return false;
         }
 
-        /// <summary>
-        /// Gets a route for provider configuration
-        /// </summary>
-        /// <param name="actionName">Action name</param>
-        /// <param name="controllerName">Controller name</param>
-        /// <param name="routeValues">Route values</param>
-        public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
+        public  IList<string> ValidatePaymentForm(IFormCollection form)
         {
-            actionName = "Configure";
-            controllerName = "PaymentPayInStore";
-            routeValues = new RouteValueDictionary() { { "Namespaces", "Nop.Plugin.Payments.PayInStore.Controllers" }, { "area", null } };
+            return new List<string>();
         }
 
-        /// <summary>
-        /// Gets a route for payment info
-        /// </summary>
-        /// <param name="actionName">Action name</param>
-        /// <param name="controllerName">Controller name</param>
-        /// <param name="routeValues">Route values</param>
-        public void GetPaymentInfoRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
+        public ProcessPaymentRequest GetPaymentInfo(IFormCollection form)
         {
-            actionName = "PaymentInfo";
-            controllerName = "PaymentPayInStore";
-            routeValues = new RouteValueDictionary() { { "Namespaces", "Nop.Plugin.Payments.PayInStore.Controllers" }, { "area", null } };
+            return new ProcessPaymentRequest();
+        }
+
+        public void GetPublicViewComponent(out string viewComponentName)
+        {
+            viewComponentName = "PaymentPayInStore";
+        }
+
+        public override string GetConfigurationPageUrl()
+        {
+            return $"{_webHelper.GetStoreLocation()}Admin/PaymentPayInStore/Configure";
         }
 
         /// <summary>
