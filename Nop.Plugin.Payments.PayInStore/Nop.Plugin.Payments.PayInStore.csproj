@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <Copyright>Copyright © Nop Solutions, Ltd</Copyright> 
     <Company>Nop Solutions, Ltd</Company> 
     <Authors>Nop Solutions, Ltd</Authors> 
-    <Version>1.30</Version> 
-    <Description>This plugin allows paying directly in the store</Description> 
     <PackageLicenseUrl></PackageLicenseUrl> 
     <PackageProjectUrl>http://www.nopcommerce.com/p/971/pay-in-store-payment-module.aspx</PackageProjectUrl> 
     <RepositoryUrl>https://github.com/nopSolutions/payinstore-plugin-for-nopcommerce</RepositoryUrl> 

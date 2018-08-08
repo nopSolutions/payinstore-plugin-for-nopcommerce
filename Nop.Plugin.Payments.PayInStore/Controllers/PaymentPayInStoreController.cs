@@ -19,8 +19,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 
         private readonly ILocalizationService _localizationService;
         private readonly ISettingService _settingService;
-        private readonly IStoreService _storeService;
-        private readonly IWorkContext _workContext;
+        private readonly IStoreContext _storeContext;
         private readonly IPermissionService _permissionService;
 
         #endregion
@@ -29,14 +28,12 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 
         public PaymentPayInStoreController(ILocalizationService localizationService,
             ISettingService settingService,
-            IStoreService storeService,
-            IWorkContext workContext,
+            IStoreContext storeContext,
             IPermissionService permissionService)
         {
             this._localizationService = localizationService;
             this._settingService = settingService;
-            this._storeService = storeService;
-            this._workContext = workContext;
+            this._storeContext = storeContext;
             this._permissionService = permissionService;
         }
 
@@ -50,7 +47,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
                 return AccessDeniedView();
 
             //load settings for a chosen store scope
-            var storeScope = GetActiveStoreScopeConfiguration(_storeService, _workContext);
+            var storeScope = _storeContext.ActiveStoreScopeConfiguration;
             var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(storeScope);
 
             var model = new ConfigurationModel
@@ -81,7 +78,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
                 return Configure();
 
             //load settings for a chosen store scope
-            var storeScope = GetActiveStoreScopeConfiguration(_storeService, _workContext);
+            var storeScope = _storeContext.ActiveStoreScopeConfiguration;
             var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(storeScope);
 
             //save settings
