@@ -3,6 +3,7 @@ using Nop.Core;
 using Nop.Plugin.Payments.PayInStore.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
+using Nop.Services.Messages;
 using Nop.Services.Security;
 using Nop.Services.Stores;
 using Nop.Web.Framework;
@@ -21,6 +22,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
         private readonly ISettingService _settingService;
         private readonly IStoreContext _storeContext;
         private readonly IPermissionService _permissionService;
+        private readonly INotificationService _notificationService;
 
         #endregion
 
@@ -29,12 +31,14 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
         public PaymentPayInStoreController(ILocalizationService localizationService,
             ISettingService settingService,
             IStoreContext storeContext,
-            IPermissionService permissionService)
+            IPermissionService permissionService,
+            INotificationService notificationService)
         {
             this._localizationService = localizationService;
             this._settingService = settingService;
             this._storeContext = storeContext;
             this._permissionService = permissionService;
+            this._notificationService = notificationService;
         }
 
         #endregion
@@ -96,7 +100,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
             //now clear settings cache
             _settingService.ClearCache();
 
-            SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
 
             return Configure();
         }
