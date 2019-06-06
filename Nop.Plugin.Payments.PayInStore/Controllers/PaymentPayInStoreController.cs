@@ -3,8 +3,8 @@ using Nop.Core;
 using Nop.Plugin.Payments.PayInStore.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
+using Nop.Services.Messages;
 using Nop.Services.Security;
-using Nop.Services.Stores;
 using Nop.Web.Framework;
 using Nop.Web.Framework.Controllers;
 using Nop.Web.Framework.Mvc.Filters;
@@ -18,23 +18,26 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
         #region Fields
 
         private readonly ILocalizationService _localizationService;
+        private readonly INotificationService _notificationService;
+        private readonly IPermissionService _permissionService;
         private readonly ISettingService _settingService;
         private readonly IStoreContext _storeContext;
-        private readonly IPermissionService _permissionService;
 
         #endregion
 
         #region Ctor
 
         public PaymentPayInStoreController(ILocalizationService localizationService,
+            INotificationService notificationService,
+            IPermissionService permissionService,
             ISettingService settingService,
-            IStoreContext storeContext,
-            IPermissionService permissionService)
+            IStoreContext storeContext)
         {
-            this._localizationService = localizationService;
-            this._settingService = settingService;
-            this._storeContext = storeContext;
-            this._permissionService = permissionService;
+            _localizationService = localizationService;
+            _notificationService = notificationService;
+            _permissionService = permissionService;
+            _settingService = settingService;
+            _storeContext = storeContext;
         }
 
         #endregion
@@ -96,11 +99,11 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
             //now clear settings cache
             _settingService.ClearCache();
 
-            SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
 
             return Configure();
         }
-        
+
         #endregion
     }
 }

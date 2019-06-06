@@ -9,13 +9,13 @@ namespace Nop.Plugin.Payments.PayInStore.Components
     [ViewComponent(Name = "PaymentPayInStore")]
     public class PaymentPayInStoreViewComponent : NopViewComponent
     {
-        private readonly IStoreContext _storeContext;
         private readonly ISettingService _settingService;
+        private readonly IStoreContext _storeContext;
 
-        public PaymentPayInStoreViewComponent(IStoreContext storeContext, ISettingService settingService)
+        public PaymentPayInStoreViewComponent(ISettingService settingService, IStoreContext storeContext)
         {
-            this._storeContext = storeContext;
-            this._settingService = settingService;
+            _settingService = settingService;
+            _storeContext = storeContext;
         }
 
         public IViewComponentResult Invoke()
