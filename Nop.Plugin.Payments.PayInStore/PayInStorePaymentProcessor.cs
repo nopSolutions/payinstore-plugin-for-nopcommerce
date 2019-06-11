@@ -18,26 +18,26 @@ namespace Nop.Plugin.Payments.PayInStore
         #region Fields
 
         private readonly ILocalizationService _localizationService;
-        private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
         private readonly IPaymentService _paymentService;
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
+        private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
 
         #endregion
 
         #region Ctor
 
         public PayInStorePaymentProcessor(ILocalizationService localizationService,
-            PayInStorePaymentSettings payInStorePaymentSettings,
             IPaymentService paymentService,
             ISettingService settingService,
-            IWebHelper webHelper)
+            IWebHelper webHelper,
+            PayInStorePaymentSettings payInStorePaymentSettings)
         {
-            _payInStorePaymentSettings = payInStorePaymentSettings;
             _localizationService = localizationService;
             _paymentService = paymentService;
             _settingService = settingService;
             _webHelper = webHelper;
+            _payInStorePaymentSettings = payInStorePaymentSettings;
         }
 
         #endregion
