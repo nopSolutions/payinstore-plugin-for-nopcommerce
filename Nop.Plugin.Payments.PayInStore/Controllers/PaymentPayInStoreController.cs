@@ -13,6 +13,7 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 {
     [AuthorizeAdmin]
     [Area(AreaNames.Admin)]
+    [AutoValidateAntiforgeryToken]
     public class PaymentPayInStoreController : BasePaymentController
     {
         #region Fields
