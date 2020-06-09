@@ -6,7 +6,7 @@
     <Company>Nop Solutions, Ltd</Company>
     <Authors>Nop Solutions, Ltd</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <PackageProjectUrl>http://www.nopcommerce.com/p/971/pay-in-store-payment-module.aspx</PackageProjectUrl>
+    <PackageProjectUrl>https://www.nopcommerce.com/pay-in-store-payment-module</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nopSolutions/payinstore-plugin-for-nopcommerce</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <OutputPath>..\..\Presentation\Nop.Web\Plugins\Payments.PayInStore</OutputPath>
