@@ -174,7 +174,7 @@ namespace Nop.Plugin.Payments.PayInStore
 
         public string GetPublicViewComponentName()
         {
-            return "PaymentPayInStore";
+            return PayInStoreDefaults.PAYMENT_INFO_VIEW_COMPONENT_NAME;
         }
 
         public override string GetConfigurationPageUrl()
