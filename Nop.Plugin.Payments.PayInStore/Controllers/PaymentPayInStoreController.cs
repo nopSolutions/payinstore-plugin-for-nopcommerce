@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Plugin.Payments.PayInStore.Models;
 using Nop.Services.Configuration;
@@ -45,14 +46,14 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 
         #region Methods
 
-        public IActionResult Configure()
+        public async Task<IActionResult> Configure()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
                 return AccessDeniedView();
 
             //load settings for a chosen store scope
-            var storeScope = _storeContext.ActiveStoreScopeConfiguration;
-            var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(storeScope);
+            var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var payInStorePaymentSettings = await _settingService.LoadSettingAsync<PayInStorePaymentSettings>(storeScope);
 
             var model = new ConfigurationModel
             {
@@ -64,26 +65,26 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
 
             if (storeScope > 0)
             {
-                model.DescriptionText_OverrideForStore = _settingService.SettingExists(payInStorePaymentSettings, x => x.DescriptionText, storeScope);
-                model.AdditionalFee_OverrideForStore = _settingService.SettingExists(payInStorePaymentSettings, x => x.AdditionalFee, storeScope);
-                model.AdditionalFeePercentage_OverrideForStore = _settingService.SettingExists(payInStorePaymentSettings, x => x.AdditionalFeePercentage, storeScope);
+                model.DescriptionText_OverrideForStore = await _settingService.SettingExistsAsync(payInStorePaymentSettings, x => x.DescriptionText, storeScope);
+                model.AdditionalFee_OverrideForStore = await _settingService.SettingExistsAsync(payInStorePaymentSettings, x => x.AdditionalFee, storeScope);
+                model.AdditionalFeePercentage_OverrideForStore = await _settingService.SettingExistsAsync(payInStorePaymentSettings, x => x.AdditionalFeePercentage, storeScope);
             }
 
             return View("~/Plugins/Payments.PayInStore/Views/Configure.cshtml", model);
         }
 
         [HttpPost]
-        public IActionResult Configure(ConfigurationModel model)
+        public async Task<IActionResult> Configure(ConfigurationModel model)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
                 return AccessDeniedView();
 
             if (!ModelState.IsValid)
-                return Configure();
+                return await Configure();
 
             //load settings for a chosen store scope
-            var storeScope = _storeContext.ActiveStoreScopeConfiguration;
-            var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(storeScope);
+            var storeScope = await _storeContext.GetActiveStoreScopeConfigurationAsync();
+            var payInStorePaymentSettings = await _settingService.LoadSettingAsync<PayInStorePaymentSettings>(storeScope);
 
             //save settings
             payInStorePaymentSettings.DescriptionText = model.DescriptionText;
@@ -93,16 +94,16 @@ namespace Nop.Plugin.Payments.PayInStore.Controllers
             /* We do not clear cache after each setting update.
              * This behavior can increase performance because cached settings will not be cleared 
              * and loaded from database after each update */
-            _settingService.SaveSettingOverridablePerStore(payInStorePaymentSettings, x => x.DescriptionText, model.DescriptionText_OverrideForStore, storeScope, false);
-            _settingService.SaveSettingOverridablePerStore(payInStorePaymentSettings, x => x.AdditionalFee, model.AdditionalFee_OverrideForStore, storeScope, false);
-            _settingService.SaveSettingOverridablePerStore(payInStorePaymentSettings, x => x.AdditionalFeePercentage, model.AdditionalFeePercentage_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(payInStorePaymentSettings, x => x.DescriptionText, model.DescriptionText_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(payInStorePaymentSettings, x => x.AdditionalFee, model.AdditionalFee_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(payInStorePaymentSettings, x => x.AdditionalFeePercentage, model.AdditionalFeePercentage_OverrideForStore, storeScope, false);
 
             //now clear settings cache
-            _settingService.ClearCache();
+            await _settingService.ClearCacheAsync();
 
-            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
 
-            return Configure();
+            return await Configure();
         }
 
         #endregion

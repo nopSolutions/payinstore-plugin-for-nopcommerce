@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
@@ -48,128 +49,162 @@ namespace Nop.Plugin.Payments.PayInStore
         /// Process a payment
         /// </summary>
         /// <param name="processPaymentRequest">Payment info required for an order processing</param>
-        /// <returns>Process payment result</returns>
-        public ProcessPaymentResult ProcessPayment(ProcessPaymentRequest processPaymentRequest)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the process payment result
+        /// </returns>
+        public Task<ProcessPaymentResult> ProcessPaymentAsync(ProcessPaymentRequest processPaymentRequest)
         {
-            return new ProcessPaymentResult();
+            return Task.FromResult(new ProcessPaymentResult());
         }
 
         /// <summary>
         /// Post process payment (used by payment gateways that require redirecting to a third-party URL)
         /// </summary>
         /// <param name="postProcessPaymentRequest">Payment info required for an order processing</param>
-        public void PostProcessPayment(PostProcessPaymentRequest postProcessPaymentRequest)
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public Task PostProcessPaymentAsync(PostProcessPaymentRequest postProcessPaymentRequest)
         {
             //nothing
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Returns a value indicating whether payment method should be hidden during checkout
         /// </summary>
-        /// <param name="cart">Shoping cart</param>
-        /// <returns>true - hide; false - display.</returns>
-        public bool HidePaymentMethod(IList<ShoppingCartItem> cart)
+        /// <param name="cart">Shopping cart</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the rue - hide; false - display.
+        /// </returns>
+        public Task<bool> HidePaymentMethodAsync(IList<ShoppingCartItem> cart)
         {
             //you can put any logic here
             //for example, hide this payment method if all products in the cart are downloadable
             //or hide this payment method if current customer is from certain country
-            return false;
+            return Task.FromResult(false);
         }
 
         /// <summary>
         /// Gets additional handling fee
         /// </summary>
-        /// <param name="cart">Shoping cart</param>
-        /// <returns>Additional handling fee</returns>
-        public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart)
+        /// <param name="cart">Shopping cart</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the additional handling fee
+        /// </returns>
+        public async Task<decimal> GetAdditionalHandlingFeeAsync(IList<ShoppingCartItem> cart)
         {
-            var result = _paymentService.CalculateAdditionalFee(cart,
-                _payInStorePaymentSettings.AdditionalFee, _payInStorePaymentSettings.AdditionalFeePercentage);
-            return result;
+            return await _paymentService.CalculateAdditionalFeeAsync(cart,
+                _payInStorePaymentSettings.AdditionalFee, _payInStorePaymentSettings.AdditionalFeePercentage);;
         }
 
         /// <summary>
         /// Captures payment
         /// </summary>
         /// <param name="capturePaymentRequest">Capture payment request</param>
-        /// <returns>Capture payment result</returns>
-        public CapturePaymentResult Capture(CapturePaymentRequest capturePaymentRequest)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the capture payment result
+        /// </returns>
+        public Task<CapturePaymentResult> CaptureAsync(CapturePaymentRequest capturePaymentRequest)
         {
-            var result = new CapturePaymentResult();
-            result.AddError("Capture method not supported");
-            return result;
+            return Task.FromResult(new CapturePaymentResult { Errors = new[] { "Capture method not supported" } });
         }
 
         /// <summary>
         /// Refunds a payment
         /// </summary>
         /// <param name="refundPaymentRequest">Request</param>
-        /// <returns>Result</returns>
-        public RefundPaymentResult Refund(RefundPaymentRequest refundPaymentRequest)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the result
+        /// </returns>
+        public Task<RefundPaymentResult> RefundAsync(RefundPaymentRequest refundPaymentRequest)
         {
-            var result = new RefundPaymentResult();
-            result.AddError("Refund method not supported");
-            return result;
+            return Task.FromResult(new RefundPaymentResult { Errors = new[] { "Refund method not supported" } });
         }
 
         /// <summary>
         /// Voids a payment
         /// </summary>
         /// <param name="voidPaymentRequest">Request</param>
-        /// <returns>Result</returns>
-        public VoidPaymentResult Void(VoidPaymentRequest voidPaymentRequest)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the result
+        /// </returns>
+        public Task<VoidPaymentResult> VoidAsync(VoidPaymentRequest voidPaymentRequest)
         {
-            var result = new VoidPaymentResult();
-            result.AddError("Void method not supported");
-            return result;
+            return Task.FromResult(new VoidPaymentResult { Errors = new[] { "Void method not supported" } });
         }
 
         /// <summary>
         /// Process recurring payment
         /// </summary>
         /// <param name="processPaymentRequest">Payment info required for an order processing</param>
-        /// <returns>Process payment result</returns>
-        public ProcessPaymentResult ProcessRecurringPayment(ProcessPaymentRequest processPaymentRequest)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the process payment result
+        /// </returns>
+        public Task<ProcessPaymentResult> ProcessRecurringPaymentAsync(ProcessPaymentRequest processPaymentRequest)
         {
-            var result = new ProcessPaymentResult();
-            result.AddError("Recurring payment not supported");
-            return result;
+            return Task.FromResult(new ProcessPaymentResult { Errors = new[] { "Recurring payment not supported" } });
         }
 
         /// <summary>
         /// Cancels a recurring payment
         /// </summary>
         /// <param name="cancelPaymentRequest">Request</param>
-        /// <returns>Result</returns>
-        public CancelRecurringPaymentResult CancelRecurringPayment(CancelRecurringPaymentRequest cancelPaymentRequest)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the result
+        /// </returns>
+        public Task<CancelRecurringPaymentResult> CancelRecurringPaymentAsync(CancelRecurringPaymentRequest cancelPaymentRequest)
         {
-            var result = new CancelRecurringPaymentResult();
-            result.AddError("Recurring payment not supported");
-            return result;
+            return Task.FromResult(new CancelRecurringPaymentResult { Errors = new[] { "Recurring payment not supported" } });
         }
 
         /// <summary>
         /// Gets a value indicating whether customers can complete a payment after order is placed but not completed (for redirection payment methods)
         /// </summary>
         /// <param name="order">Order</param>
-        /// <returns>Result</returns>
-        public bool CanRePostProcessPayment(Order order)
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the result
+        /// </returns>
+        public Task<bool> CanRePostProcessPaymentAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
             //it's not a redirection payment method. So we always return false
-            return false;
+            return Task.FromResult(false);
         }
 
-        public IList<string> ValidatePaymentForm(IFormCollection form)
+        /// <summary>
+        /// Validate payment form
+        /// </summary>
+        /// <param name="form">The parsed form values</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the list of validating errors
+        /// </returns>
+        public Task<IList<string>> ValidatePaymentFormAsync(IFormCollection form)
         {
-            return new List<string>();
+            return Task.FromResult<IList<string>>(new List<string>());
         }
 
-        public ProcessPaymentRequest GetPaymentInfo(IFormCollection form)
+        /// <summary>
+        /// Get payment information
+        /// </summary>
+        /// <param name="form">The parsed form values</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation
+        /// The task result contains the payment info holder
+        /// </returns>
+        public Task<ProcessPaymentRequest> GetPaymentInfoAsync(IFormCollection form)
         {
-            return new ProcessPaymentRequest();
+            return Task.FromResult(new ProcessPaymentRequest());
         }
 
         public string GetPublicViewComponentName()
@@ -185,16 +220,17 @@ namespace Nop.Plugin.Payments.PayInStore
         /// <summary>
         /// Install the plugin
         /// </summary>
-        public override void Install()
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public override async Task InstallAsync()
         {
             //settings
-            _settingService.SaveSetting(new PayInStorePaymentSettings()
+            await _settingService.SaveSettingAsync(new PayInStorePaymentSettings()
             {
                 DescriptionText = "<p>Reserve items at your local store, and pay in store when you pick up your order.<br />Our store location: USA, New York,...</p><p>P.S. You can edit this text from admin panel.</p>"
             });
 
             //locales
-            _localizationService.AddPluginLocaleResource(new Dictionary<string, string>
+            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Payment.PayInStore.AdditionalFee"] = "Additional fee",
                 ["Plugins.Payment.PayInStore.AdditionalFee.Hint"] = "The additional fee.",
@@ -205,21 +241,35 @@ namespace Nop.Plugin.Payments.PayInStore
                 ["Plugins.Payment.PayInStore.PaymentMethodDescription"] = "Paying directly in the store"
             });
 
-            base.Install();
+            await base.InstallAsync();
         }
 
         /// <summary>
         /// Uninstall the plugin
         /// </summary>
-        public override void Uninstall()
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public override async Task UninstallAsync()
         {
             //settings
-            _settingService.DeleteSetting<PayInStorePaymentSettings>();
+            await _settingService.DeleteSettingAsync<PayInStorePaymentSettings>();
 
             //locales
-            _localizationService.DeletePluginLocaleResources("Plugins.Payment.PayInStore");
+            await _localizationService.DeleteLocaleResourcesAsync("Plugins.Payment.PayInStore");
 
-            base.Uninstall();
+            await base.UninstallAsync();
+        }
+
+        /// <summary>
+        /// Gets a payment method description that will be displayed on checkout pages in the public store
+        /// </summary>
+        /// <remarks>
+        /// return description of this payment method to be display on "payment method" checkout step. good practice is to make it localizable
+        /// for example, for a redirection payment method, description may be like this: "You will be redirected to PayPal site to complete the payment"
+        /// </remarks>
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public async Task<string> GetPaymentMethodDescriptionAsync()
+        {
+            return await _localizationService.GetResourceAsync("Plugins.Payment.PayInStore.PaymentMethodDescription");
         }
 
         #endregion
@@ -261,12 +311,6 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </summary>
         public bool SkipPaymentInfo => false;
 
-        /// <summary>
-        /// Gets a payment method description that will be displayed on checkout pages in the public store
-        /// </summary>
-        public string PaymentMethodDescription => _localizationService.GetResource("Plugins.Payment.PayInStore.PaymentMethodDescription");
-
         #endregion
-
     }
 }

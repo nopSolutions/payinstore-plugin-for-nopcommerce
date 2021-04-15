@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Plugin.Payments.PayInStore.Models;
 using Nop.Services.Configuration;
@@ -18,9 +19,11 @@ namespace Nop.Plugin.Payments.PayInStore.Components
             _storeContext = storeContext;
         }
 
-        public IViewComponentResult Invoke()
+        /// <returns>A task that represents the asynchronous operation</returns>
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var payInStorePaymentSettings = _settingService.LoadSetting<PayInStorePaymentSettings>(_storeContext.CurrentStore.Id);
+            var currentStore = await _storeContext.GetCurrentStoreAsync();
+            var payInStorePaymentSettings = await _settingService.LoadSettingAsync<PayInStorePaymentSettings>(currentStore.Id);
             var model = new PaymentInfoModel
             {
                 DescriptionText = payInStorePaymentSettings.DescriptionText

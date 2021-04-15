@@ -7,10 +7,10 @@
 @await Component.InvokeAsync("StoreScopeConfiguration")
 
 <form asp-controller="PaymentPayInStore" asp-action="Configure" method="post">
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="form-group">
+    <div class="card-group">
+        <div class="card card-default">
+            <div class="card-body">
+                <div class="form-group row">
                     <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="DescriptionText_OverrideForStore" asp-input="DescriptionText" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                         <nop-label asp-for="DescriptionText" />
@@ -20,7 +20,7 @@
                         <span asp-validation-for="DescriptionText"></span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group row">
                     <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="AdditionalFee_OverrideForStore" asp-input="AdditionalFee" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                         <nop-label asp-for="AdditionalFee" />
@@ -30,7 +30,7 @@
                         <span asp-validation-for="AdditionalFee"></span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group row">
                     <div class="col-md-3">
                         <nop-override-store-checkbox asp-for="AdditionalFeePercentage_OverrideForStore" asp-input="AdditionalFeePercentage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                         <nop-label asp-for="AdditionalFeePercentage" />
@@ -40,7 +40,7 @@
                         <span asp-validation-for="AdditionalFeePercentage"></span>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group row">
                     <div class="col-md-9 col-md-offset-3">
                         <button type="submit" class="btn btn-primary">
                             @T("Admin.Common.Save")

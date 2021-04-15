@@ -3,7 +3,7 @@ using Nop.Web.Framework.Mvc.ModelBinding;
 
 namespace Nop.Plugin.Payments.PayInStore.Models
 {
-    public class ConfigurationModel : BaseNopModel
+    public record ConfigurationModel : BaseNopModel
     {
         public int ActiveStoreScopeConfiguration { get; set; }
 
