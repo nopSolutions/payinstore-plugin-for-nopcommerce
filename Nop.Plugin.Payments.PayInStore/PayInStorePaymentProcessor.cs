@@ -6,6 +6,7 @@ using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
+using Nop.Services.Orders;
 using Nop.Services.Payments;
 using Nop.Services.Plugins;
 
@@ -19,7 +20,7 @@ namespace Nop.Plugin.Payments.PayInStore
         #region Fields
 
         private readonly ILocalizationService _localizationService;
-        private readonly IPaymentService _paymentService;
+        private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
         private readonly PayInStorePaymentSettings _payInStorePaymentSettings;
@@ -29,13 +30,13 @@ namespace Nop.Plugin.Payments.PayInStore
         #region Ctor
 
         public PayInStorePaymentProcessor(ILocalizationService localizationService,
-            IPaymentService paymentService,
+            IOrderTotalCalculationService orderTotalCalculationService,
             ISettingService settingService,
             IWebHelper webHelper,
             PayInStorePaymentSettings payInStorePaymentSettings)
         {
             _localizationService = localizationService;
-            _paymentService = paymentService;
+            _orderTotalCalculationService = orderTotalCalculationService;
             _settingService = settingService;
             _webHelper = webHelper;
             _payInStorePaymentSettings = payInStorePaymentSettings;
@@ -95,7 +96,7 @@ namespace Nop.Plugin.Payments.PayInStore
         /// </returns>
         public async Task<decimal> GetAdditionalHandlingFeeAsync(IList<ShoppingCartItem> cart)
         {
-            return await _paymentService.CalculateAdditionalFeeAsync(cart,
+            return await _orderTotalCalculationService.CalculatePaymentAdditionalFeeAsync(cart,
                 _payInStorePaymentSettings.AdditionalFee, _payInStorePaymentSettings.AdditionalFeePercentage);;
         }
 
@@ -230,7 +231,7 @@ namespace Nop.Plugin.Payments.PayInStore
             });
 
             //locales
-            await _localizationService.AddLocaleResourceAsync(new Dictionary<string, string>
+            await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string>
             {
                 ["Plugins.Payment.PayInStore.AdditionalFee"] = "Additional fee",
                 ["Plugins.Payment.PayInStore.AdditionalFee.Hint"] = "The additional fee.",
