@@ -7,7 +7,7 @@ using Nop.Web.Framework.Components;
 
 namespace Nop.Plugin.Payments.PayInStore.Components
 {
-    [ViewComponent(Name = PayInStoreDefaults.PAYMENT_INFO_VIEW_COMPONENT_NAME)]
+    [ViewComponent(Name = "PaymentPayInStore")]
     public class PaymentPayInStoreViewComponent : NopViewComponent
     {
         private readonly ISettingService _settingService;

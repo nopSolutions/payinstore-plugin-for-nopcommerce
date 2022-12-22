@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
+using Nop.Plugin.Payments.PayInStore.Components;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
@@ -208,9 +209,9 @@ namespace Nop.Plugin.Payments.PayInStore
             return Task.FromResult(new ProcessPaymentRequest());
         }
 
-        public string GetPublicViewComponentName()
+        public Type GetPublicViewComponent()
         {
-            return PayInStoreDefaults.PAYMENT_INFO_VIEW_COMPONENT_NAME;
+            return typeof(PaymentPayInStoreViewComponent);
         }
 
         public override string GetConfigurationPageUrl()
