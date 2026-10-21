@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Payments.PayInStore.Components;
 using Nop.Services.Configuration;
+using Nop.Services.Helpers;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
 using Nop.Services.Payments;
@@ -206,11 +206,18 @@ public class PayInStorePaymentProcessor : BasePlugin, IPaymentMethod
         return Task.FromResult(new ProcessPaymentRequest());
     }
 
+    /// <summary>
+    /// Gets a name of a view component for displaying plugin in public store ("payment info" checkout step)
+    /// </summary>
+    /// <returns>View component name</returns>
     public Type GetPublicViewComponent()
     {
         return typeof(PaymentPayInStoreViewComponent);
     }
 
+    /// <summary>
+    /// Gets a configuration page URL
+    /// </summary>
     public override string GetConfigurationPageUrl()
     {
         return $"{_webHelper.GetStoreLocation()}Admin/PaymentPayInStore/Configure";
